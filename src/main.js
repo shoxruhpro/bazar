@@ -1,4 +1,5 @@
 'use strict'
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const app = express()
@@ -13,7 +14,7 @@ const helmet = require('helmet')
 const PORT = 3000
 
 
-app.use(morgan(process.env.NODE_ENV === 'PRODUCTION' ? 'tiny' : 'dev'))
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'tiny' : 'dev'))
 app.use(helmet())
 app.use(cors())
 app.use('/uploads', express.static('uploads'))

@@ -2,15 +2,14 @@
 const router = require('express').Router()
 const db = require('../db')
 const otpGenerator = require('otp-generator')
-const { expressjwt } = require("express-jwt")
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const authMiddleware = require('../middlewares/auth')
 
 
 const BOT_TOKEN = '6579262888:AAFM5TR5u5nGcdL5VER5eNFnFakGKWlc5VM'
 const BOT_SECRET_TOKEN = 'Phx14iOvd2tG17O'
-const JWT_SECRET = 'FnHEbkpCURSLnr7'
-
+const { JWT_SECRET } = process.env
 
 router.post('/telegram', async (req, res) => {
     const { message } = req.body
@@ -102,7 +101,7 @@ router.post('/code', async (req, res) => {
 })
 
 
-router.post('/password', expressjwt({ secret: JWT_SECRET, algorithms: ['HS256'] }), async (req, res) => {
+router.post('/password', authMiddleware, async (req, res) => {
     if (!req.body.password || !req.auth.noPassword)
         return res.status(400).json({ error: 'Bad Request' })
 

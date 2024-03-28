@@ -4,6 +4,7 @@ const Joi = require('joi')
 const db = require('../db')
 const objToQuerySet = require('../utils/obj-to-query-set')
 const isDigit = require('../utils/is-digit')
+const authMiddleware = require('../middlewares/auth')
 
 
 const createSchema = Joi.object({
@@ -49,7 +50,7 @@ router.route('/')
             res.status(500).json({ error: e.message || 'Unknown Error' })
         }
     })
-    .post(async (req, res) => {
+    .post(authMiddleware, async (req, res) => {
         try {
             await createSchema.validateAsync(req.body)
             const { rowCount } = await db.result('INSERT INTO products ' +
@@ -85,7 +86,7 @@ router.route('/:id')
             res.status(500).json({ error: e?.message || 'Unknown Error' })
         }
     })
-    .patch(async (req, res) => {
+    .patch(authMiddleware, async (req, res) => {
         if (!isDigit(req.params.id))
             return res.status(404).json({ error: 'Not Found' })
 
@@ -111,7 +112,7 @@ router.route('/:id')
             res.status(STATUS_CODE).json({ error: e.message || 'Unknown Error' })
         }
     })
-    .delete(async (req, res) => {
+    .delete(authMiddleware, async (req, res) => {
         if (!isDigit(req.params.id))
             return res.status(404).json({ error: 'Not Found' })
 

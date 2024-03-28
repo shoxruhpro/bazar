@@ -4,6 +4,7 @@ const multer = require('multer')
 const db = require('../db')
 const { unlink } = require('fs/promises')
 const path = require('path')
+const authMiddleware = require('../middlewares/auth')
 
 
 const upload = multer({
@@ -21,7 +22,7 @@ const upload = multer({
 })
 
 
-router.post('/', upload.single('photo'), async (req, res) => {
+router.post('/', authMiddleware, upload.single('photo'), async (req, res) => {
     if (!req.file)
         return res.status(400).json({ error: 'Bad Request' })
 
@@ -34,7 +35,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
 })
 
 
-router.delete('/:file_name', async (req, res) => {
+router.delete('/:file_name', authMiddleware, async (req, res) => {
     if (!/\d+\.\w+/.test(req.params.file_name))
         return res.status(404).json({ error: 'Not Found' })
 
