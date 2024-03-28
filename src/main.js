@@ -7,12 +7,17 @@ const subcategoryRoutes = require('./routes/subcategory.routes')
 const authRoutes = require('./routes/auth.routes')
 const photoRoutes = require('./routes/photo.routes')
 const productRoutes = require('./routes/product.routes')
+const cors = require('cors')
+const helmet = require('helmet')
 
 const PORT = 3000
 
+
+app.use(morgan(process.env.NODE_ENV === 'PRODUCTION' ? 'tiny' : 'dev'))
+app.use(helmet())
+app.use(cors())
 app.use('/uploads', express.static('uploads'))
 app.use(express.json())
-app.use(morgan(process.env.NODE_ENV === 'PRODUCTION' ? 'tiny' : 'dev'))
 app.use('/api/v1/categories', categryRoutes)
 app.use('/api/v1/subcategories', subcategoryRoutes)
 app.use('/api/v1/products', productRoutes)
