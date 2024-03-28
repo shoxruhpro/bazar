@@ -1,0 +1,1 @@
+module.exports = id => Number.isInteger(Number(id))
