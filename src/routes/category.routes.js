@@ -10,14 +10,14 @@ const createSchema = Joi.object({
     uz: Joi.string().min(2).max(26),
     ru: Joi.string().min(2).max(26),
     en: Joi.string().min(2).max(26),
-    category_id: Joi.number().min(1)
+    photo: Joi.string().min(17).max(255)
 }).required()
 
 const updateSchema = Joi.object({
     uz: Joi.string().min(2).max(26),
     ru: Joi.string().min(2).max(26),
     en: Joi.string().min(2).max(26),
-    category_id: Joi.number().min(1)
+    photo: Joi.string().min(17).max(255)
 }).optional()
 
 
@@ -31,9 +31,8 @@ router.route('/')
         }
     })
     .post(async (req, res) => {
-        await createSchema.validateAsync(req.body)
-
         try {
+            await createSchema.validateAsync(req.body)
             const { rowCount } = await db.result('INSERT INTO categories (uz, ru, en) VALUES (${uz}, ${ru}, ${en})', req.body)
 
             if (rowCount === 1)
@@ -50,7 +49,7 @@ router.route('/')
 router.route('/:id')
     .get(async (req, res) => {
         if (!isDigit(req.params.id))
-            return res.status(400).json({ error: 'Bad Request' })
+            return res.status(404).json({ error: 'Not Found' })
 
         try {
             const category = await db.oneOrNone('SELECT * FROM categories WHERE id = $1', req.params.id)
@@ -60,14 +59,16 @@ router.route('/:id')
         }
     })
     .patch(async (req, res) => {
-        await updateSchema.validateAsync(req.body)
-
-        const [cols, size] = objToQuerySet(req.body)
-
-        if (size === 0)
-            return res.status(400).json({ error: 'Bad Request' })
+        if (!isDigit(req.params.id))
+            return res.status(404).json({ error: 'Not Found' })
 
         try {
+            await updateSchema.validateAsync(req.body)
+            const [cols, size] = objToQuerySet(req.body)
+
+            if (size === 0)
+                return res.status(400).json({ error: 'Bad Request' })
+
             const { rowCount } = await db.result(`UPDATE categories SET ${cols} WHERE id = $${size + 1}`,
                 [
                     ...Object.values(req.body), req.params.id

@@ -34,9 +34,9 @@ router.route('/')
         }
     })
     .post(async (req, res) => {
-        await createSchema.validateAsync(req.body)
 
         try {
+            await createSchema.validateAsync(req.body)
             const { rowCount } = await db.result('INSERT INTO subcategories (uz, ru, en, category_id) VALUES (${uz}, ${ru}, ${en}, ${category_id})', req.body)
 
             if (rowCount === 1)
@@ -66,13 +66,13 @@ router.route('/:id')
         if (!isDigit(req.params.id))
             return res.status(404).json({ error: 'Not Found' })
 
-        await updateSchema.validateAsync(req.body)
-        const [cols, size] = objToQuerySet(req.body)
-
-        if (size === 0)
-            return res.status(400).json({ error: 'Bad Request' })
-
         try {
+            await updateSchema.validateAsync(req.body)
+            const [cols, size] = objToQuerySet(req.body)
+
+            if (size === 0)
+                return res.status(400).json({ error: 'Bad Request' })
+
             const { rowCount } = await db.result(`UPDATE subcategories SET ${cols} WHERE id = $${size + 1}`,
                 [
                     ...Object.values(req.body), req.params.id
