@@ -34,7 +34,6 @@ router.route('/')
         }
     })
     .post(async (req, res) => {
-
         try {
             await createSchema.validateAsync(req.body)
             const { rowCount } = await db.result('INSERT INTO subcategories (uz, ru, en, category_id) VALUES (${uz}, ${ru}, ${en}, ${category_id})', req.body)

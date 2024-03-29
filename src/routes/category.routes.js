@@ -33,7 +33,7 @@ router.route('/')
     .post(async (req, res) => {
         try {
             await createSchema.validateAsync(req.body)
-            const { rowCount } = await db.result('INSERT INTO categories (uz, ru, en) VALUES (${uz}, ${ru}, ${en})', req.body)
+            const { rowCount } = await db.result('INSERT INTO categories (uz, ru, en, photo) VALUES (${uz}, ${ru}, ${en}, ${photo})', req.body)
 
             if (rowCount === 1)
                 res.status(200).json({ success: true })
