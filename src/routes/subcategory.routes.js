@@ -7,16 +7,16 @@ const Joi = require('joi')
 
 
 const createSchema = Joi.object({
-    uz: Joi.string().min(2).max(26),
-    ru: Joi.string().min(2).max(26),
-    en: Joi.string().min(2).max(26),
+    uz: Joi.string().min(2).max(50),
+    ru: Joi.string().min(2).max(50),
+    en: Joi.string().min(2).max(50),
     category_id: Joi.number().min(1)
 }).required()
 
 const updateSchema = Joi.object({
-    uz: Joi.string().min(2).max(26),
-    ru: Joi.string().min(2).max(26),
-    en: Joi.string().min(2).max(26),
+    uz: Joi.string().min(2).max(50),
+    ru: Joi.string().min(2).max(50),
+    en: Joi.string().min(2).max(50),
     category_id: Joi.number().min(1)
 }).optional()
 
