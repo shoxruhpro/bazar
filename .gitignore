@@ -3,4 +3,3 @@ sql/
 package-lock.json
 playground.js
 .env
-uploads/*
