@@ -73,8 +73,8 @@ router.route('/')
 
             res.json(products)
         } catch (e) {
-            res.status(500).json({ error: e.message || 'Unknown Error' })
-            console.log(e)
+            const STATUS_CODE = (e instanceof Joi.ValidationError) ? 400 : 500
+            res.status(STATUS_CODE).json({ error: e.message || 'Unknown Error' })
         }
     })
     .post(authMiddleware, async (req, res) => {
