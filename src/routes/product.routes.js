@@ -12,13 +12,13 @@ const createSchema = Joi.object({
     product_description: Joi.string().min(40).max(9000).allow(null),
     product_address: Joi.array().items(Joi.number().integer()).length(2).required(),
     brand: Joi.string().min(2).max(100).allow(null),
-    price: Joi.number().min(0).max(2_000_000_000).required(),
-    old_price: Joi.number().min(0).max(2_000_000_000).allow(null),
+    price: Joi.number().integer().min(0).max(2_000_000_000).required(),
+    old_price: Joi.number().integer().min(0).max(2_000_000_000).allow(null),
     phone_number: Joi.string().min(5).max(18).required(),
     variants: Joi.array().items(Joi.string().max(100)).max(10).allow(null),
     photos: Joi.array().items(Joi.string().min(17).max(255)).min(1).max(10).required(),
-    subcategory_id: Joi.number().min(1).required(),
-    user_id: Joi.number().min(1).required()
+    subcategory_id: Joi.number().integer().min(1).required(),
+    user_id: Joi.number().integer().min(1).required()
 })
 
 const updateSchema = Joi.object({
@@ -26,28 +26,54 @@ const updateSchema = Joi.object({
     product_description: Joi.string().min(40).max(9000),
     product_address: Joi.array().items(Joi.number().integer()).length(2),
     brand: Joi.string().min(2).max(100),
-    price: Joi.number().min(0).max(2_000_000_000),
-    old_price: Joi.number().min(0).max(2_000_000_000),
+    price: Joi.number().integer().min(0).max(2_000_000_000),
+    old_price: Joi.number().integer().min(0).max(2_000_000_000),
     phone_number: Joi.string().min(5).max(18),
     variants: Joi.array().items(Joi.string().max(100)).max(10),
     photos: Joi.array().items(Joi.string().min(17).max(255)).min(1).max(10),
-    subcategory_id: Joi.number().min(1),
-    user_id: Joi.number().min(1)
+    subcategory_id: Joi.number().integer().min(1),
+    user_id: Joi.number().integer().min(1)
+}).optional()
+
+const filterSchema = Joi.object({
+    search: Joi.string().min(2).max(255),
+    address: Joi.array().items(Joi.number().integer()).length(2),
+    from_price: Joi.number().integer().min(1).max(2_000_000_000),
+    to_price: Joi.number().integer().min(1).max(2_000_000_000),
+    category_id: Joi.number().min(1),
+    subcategory_id: Joi.number().min(1)
 }).optional()
 
 
 router.route('/')
     .get(async (req, res) => {
         try {
+            const where = []
+
+            if (req.query.search) {
+                req.query.search = `%${req.query.search}%`
+                where.push('product_name LIKE ${search}')
+            }
+
+            if (req.query.address) {
+                req.query.address = req.query.address.split(',').map(el => Number(el))
+                where.push('product_address && ${address}')
+            }
+
+            await filterSchema.validateAsync(req.query)
+            let filter = where.length ? ' WHERE ' + where.join(' AND ') : ''
+
             const products = await db.manyOrNone(
-                'SELECT products.id, product_name, price, old_price, photos[1], ' +
+                'SELECT products.id, product_name, price, old_price, photos[1] AS photo, ' +
                 'categories.uz AS category_uz, categories.ru AS category_ru, categories.en AS category_en ' +
                 'FROM products INNER JOIN subcategories ON products.subcategory_id = subcategories.id ' +
-                'INNER JOIN categories ON subcategories.category_id = categories.id')
+                'INNER JOIN categories ON subcategories.category_id = categories.id ' +
+                filter, req.query)
 
             res.json(products)
         } catch (e) {
             res.status(500).json({ error: e.message || 'Unknown Error' })
+            console.log(e)
         }
     })
     .post(authMiddleware, async (req, res) => {

@@ -16,9 +16,19 @@ const PORT = 3000
 
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'tiny' : 'dev'))
 app.use(cors())
-// app.use(helmet())
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        "img-src": ["'self'", "*"],
+      },
+    },
+  })
+)
 app.use('/uploads', express.static('uploads'))
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use('/api/v1/categories', categryRoutes)
 app.use('/api/v1/subcategories', subcategoryRoutes)
 app.use('/api/v1/products', productRoutes)
