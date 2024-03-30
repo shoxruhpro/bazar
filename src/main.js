@@ -9,14 +9,14 @@ const authRoutes = require('./routes/auth.routes')
 const photoRoutes = require('./routes/photo.routes')
 const productRoutes = require('./routes/product.routes')
 const cors = require('cors')
-const helmet = require('helmet')
+// const helmet = require('helmet')
 
 const PORT = 3000
 
 
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'tiny' : 'dev'))
 app.use(cors())
-app.use(helmet({ crossOriginEmbedderPolicy: false }))
+// app.use(helmet({ crossOriginEmbedderPolicy: false }))
 
 app.use('/uploads', express.static('uploads'))
 app.use(express.json())
