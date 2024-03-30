@@ -15,8 +15,8 @@ const PORT = 3000
 
 
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'tiny' : 'dev'))
-app.use(helmet())
 app.use(cors())
+// app.use(helmet())
 app.use('/uploads', express.static('uploads'))
 app.use(express.json())
 app.use('/api/v1/categories', categryRoutes)
