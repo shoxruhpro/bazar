@@ -61,6 +61,26 @@ router.route('/')
                 where.push('product_address && ${address}')
             }
 
+            if (req.query.from_price) {
+                req.query.from_price = Number(req.query.from_price)
+                where.push('price >= ${from_price}')
+            }
+
+            if (req.query.to_price) {
+                req.query.to_price = Number(req.query.to_price)
+                where.push('price <= ${to_price}')
+            }
+
+            if (req.query.subcategory_id) {
+                req.query.subcategory_id = Number(req.query.subcategory_id)
+                where.push('subcategory_id = ${subcategory_id}')
+            }
+
+            if (req.query.category_id) {
+                req.query.category_id = Number(req.query.category_id)
+                where.push('category_id = ${category_id}')
+            }
+
             await filterSchema.validateAsync(req.query)
             let filter = where.length ? ' WHERE ' + where.join(' AND ') : ''
 
