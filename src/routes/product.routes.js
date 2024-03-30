@@ -4,7 +4,7 @@ const Joi = require('joi')
 const db = require('../db')
 const objToQuerySet = require('../utils/obj-to-query-set')
 const isDigit = require('../utils/is-digit')
-const authMiddleware = require('../middlewares/auth')
+const authMiddleware = require('../middlewares/auth.middleware')
 
 
 const createSchema = Joi.object({
@@ -31,8 +31,7 @@ const updateSchema = Joi.object({
     phone_number: Joi.string().min(5).max(18),
     variants: Joi.array().items(Joi.string().max(100)).max(10),
     photos: Joi.array().items(Joi.string().min(17).max(255)).min(1).max(10),
-    subcategory_id: Joi.number().integer().min(1),
-    user_id: Joi.number().integer().min(1)
+    subcategory_id: Joi.number().integer().min(1)
 }).optional()
 
 
@@ -145,9 +144,9 @@ router.route('/:id')
         try {
             await updateSchema.validateAsync(req.body)
 
-            const { rowCount } = await db.result(`UPDATE products SET ${cols} WHERE id = $${size + 1}`,
+            const { rowCount } = await db.result(`UPDATE products SET ${cols} WHERE id = $${size + 1} AND user_id = $${size + 2}`,
                 [
-                    ...Object.values(req.body), req.params.id
+                    ...Object.values(req.body), req.params.id, req.auth.user_id
                 ])
 
             if (rowCount === 1)
@@ -164,7 +163,7 @@ router.route('/:id')
             return res.status(404).json({ error: 'Not Found' })
 
         try {
-            const { rowCount } = await db.result('DELETE FROM products WHERE id = $1', req.params.id)
+            const { rowCount } = await db.result('DELETE FROM products WHERE id = $1 AND user_id = $2', [req.params.id, req.auth.user_id])
 
             if (rowCount === 1)
                 res.status(200).json({ success: true })

@@ -4,12 +4,13 @@ const db = require('../db')
 const otpGenerator = require('otp-generator')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
-const authMiddleware = require('../middlewares/auth')
+const authMiddleware = require('../middlewares/auth.middleware')
 
 
 const BOT_TOKEN = '6579262888:AAFM5TR5u5nGcdL5VER5eNFnFakGKWlc5VM'
 const BOT_SECRET_TOKEN = 'Phx14iOvd2tG17O'
 const { JWT_SECRET } = process.env
+
 
 router.post('/telegram', async (req, res) => {
     const { message } = req.body
@@ -138,6 +139,17 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Unauthorized' })
 
         res.json({ token: jwt.sign({ user_id: user.user_id }, JWT_SECRET, { expiresIn: '1w', algorithm: 'HS256' }) })
+    } catch (e) {
+        res.status(500).json({ error: e.message || 'Unknown Error' })
+    }
+})
+
+
+router.get('/me', authMiddleware, async (req, res) => {
+    try {
+        const user = await db.oneOrNone('SELECT * FROM users WHERE user_id = $1', req.auth.user_id)
+        delete user.user_password
+        res.json(user)
     } catch (e) {
         res.status(500).json({ error: e.message || 'Unknown Error' })
     }

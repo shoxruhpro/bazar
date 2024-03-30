@@ -4,7 +4,7 @@ const multer = require('multer')
 const db = require('../db')
 const { unlink } = require('fs/promises')
 const path = require('path')
-const authMiddleware = require('../middlewares/auth')
+const authMiddleware = require('../middlewares/auth.middleware')
 
 
 const upload = multer({
