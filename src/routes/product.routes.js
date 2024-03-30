@@ -35,6 +35,7 @@ const updateSchema = Joi.object({
     user_id: Joi.number().integer().min(1)
 }).optional()
 
+
 const filterSchema = Joi.object({
     search: Joi.string().min(2).max(255),
     address: Joi.array().items(Joi.number().integer()).length(2),
@@ -55,7 +56,7 @@ router.route('/')
                 where.push('product_name LIKE ${search}')
             }
 
-            if (req.query.address) {
+            if (typeof req.query.address === 'string') {
                 req.query.address = req.query.address.split(',').map(el => Number(el))
                 where.push('product_address && ${address}')
             }
