@@ -49,8 +49,8 @@ router.delete('/:file_name', authMiddleware, async (req, res) => {
             res.status(500).json({ error: 'Unknown Error' })
         }
     } catch (e) {
-        const STATUS_CODE = e.syscall === 'unlink' ? 404 : 500
-        res.status(STATUS_CODE).json({ error: e.message || 'Unknown Error' })
+        res.status(e.syscall === 'unlink' ? 404 : 500)
+        res.json({ error: e.message || 'Unknown Error' })
     }
 })
 

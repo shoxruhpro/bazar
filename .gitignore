@@ -1,5 +1,5 @@
 node_modules/
 sql/
 package-lock.json
-playground.js
 .env
+playground.js

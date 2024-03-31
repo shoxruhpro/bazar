@@ -40,8 +40,8 @@ router.route('/')
             else
                 res.status(500).json({ error: 'Unknown Error' })
         } catch (e) {
-            const STATUS_CODE = (e instanceof Joi.ValidationError) ? 400 : 500
-            res.status(STATUS_CODE).json({ error: e.message || 'Unknown Error' })
+            res.status(e instanceof Joi.ValidationError ? 400 : 500)
+            res.json({ error: e.message || 'Unknown Error' })
         }
     })
 
@@ -79,8 +79,8 @@ router.route('/:id')
             else
                 res.status(404).json({ error: 'Not Found' })
         } catch (e) {
-            const STATUS_CODE = (e instanceof Joi.ValidationError) ? 400 : 500
-            res.status(STATUS_CODE).json({ error: e.message || 'Unknown Error' })
+            res.status(e instanceof Joi.ValidationError ? 400 : 500)
+            res.json({ error: e.message || 'Unknown Error' })
         }
     })
     .delete(async (req, res) => {

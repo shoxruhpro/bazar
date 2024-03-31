@@ -90,7 +90,7 @@ router.post('/code', async (req, res) => {
         if (!(code?.length === 6))
             return res.status(400).json({ error: 'Bad Request' })
 
-        const found = await db.oneOrNone('DELETE FROM codes WHERE code = $1 RETURNING user_id', code)
+        const found = await db.oneOrNone('DELETE FROM codes WHERE user_id IN (SELECT user_id FROM codes WHERE code = $1) RETURNING user_id', code)
 
         if (!found)
             return res.status(401).json({ error: 'Unauthorized' })
@@ -108,7 +108,6 @@ router.post('/password', authMiddleware, async (req, res) => {
 
     try {
         const hash = await bcrypt.hash(req.body.password, 1)
-
         const { rowCount } = await db.result('UPDATE users SET user_password = $1 WHERE user_id = $2', [hash, req.auth.user_id])
 
         if (!rowCount)
@@ -139,17 +138,6 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Unauthorized' })
 
         res.json({ token: jwt.sign({ user_id: user.user_id }, JWT_SECRET, { expiresIn: '1w', algorithm: 'HS256' }) })
-    } catch (e) {
-        res.status(500).json({ error: e.message || 'Unknown Error' })
-    }
-})
-
-
-router.get('/me', authMiddleware, async (req, res) => {
-    try {
-        const user = await db.oneOrNone('SELECT * FROM users WHERE user_id = $1', req.auth.user_id)
-        delete user.user_password
-        res.json(user)
     } catch (e) {
         res.status(500).json({ error: e.message || 'Unknown Error' })
     }

@@ -8,6 +8,7 @@ const subcategoryRoutes = require('./routes/subcategory.routes')
 const authRoutes = require('./routes/auth.routes')
 const photoRoutes = require('./routes/photo.routes')
 const productRoutes = require('./routes/product.routes')
+const userRoutes = require('./routes/user.routes')
 const cors = require('cors')
 // const helmet = require('helmet')
 
@@ -26,10 +27,9 @@ app.use('/api/v1/subcategories', subcategoryRoutes)
 app.use('/api/v1/products', productRoutes)
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/photo', photoRoutes)
-
-app.get('/', async (req, res) => {
-  res.redirect('https://bazart.uz/')
-})
+app.use('/api/v1/user', userRoutes)
+app.get('/', async (req, res) => res.redirect('https://bazart.uz/'))
+app.use(async (req, res) => res.status(404).json({ error: 'Not Found' }));
 
 app.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`)
