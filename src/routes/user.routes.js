@@ -75,4 +75,24 @@ router.route('/')
     })
 
 
+router.get('/products', authMiddleware, async (req, res) => {
+    try {
+        const products = await db.manyOrNone(
+            'SELECT products.id, product_name, price, photos[1] AS photo, ' +
+            "json_build_object('uz', c.uz, 'ru', c.ru, 'en', c.en) AS category, " +
+            "json_build_object('uz', s.uz, 'ru', s.ru, 'en', s.en) AS subcategory " +
+            'FROM products ' +
+            'INNER JOIN subcategories s ON products.subcategory_id = s.id ' +
+            'INNER JOIN categories c ON s.category_id = c.id ' +
+            'WHERE user_id = $1',
+            req.auth.user_id)
+
+        res.json(products)
+    } catch (e) {
+        res.status(500).json({ error: e.message || 'Unknown Error' })
+        console.log(e)
+    }
+})
+
+
 module.exports = router
