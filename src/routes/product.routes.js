@@ -125,12 +125,19 @@ router.route('/:id')
 
         try {
             const product = await db.oneOrNone(
-                'SELECT p.id, product_name, info, product_description, product_address, brand, price, old_price, p.phone_number, variants, photos, full_name, p.user_id, u.photo ' +
-                'FROM products AS p INNER JOIN subcategories s ON p.subcategory_id = s.id ' +
+                'SELECT p.id, product_name, info, product_description, product_address, brand, price, old_price, p.phone_number, variants, photos, subcategory_id,' +
+                ' full_name, p.user_id, u.photo ' +
+                'FROM products p INNER JOIN subcategories s ON p.subcategory_id = s.id ' +
                 'INNER JOIN categories c ON s.category_id = c.id ' +
                 'INNER JOIN users u ON p.user_id = u.user_id ' +
                 'WHERE p.id = $1', req.params.id)
-            res.json(product)
+
+            if (!product)
+                return res.status(404).json({ error: 'Not Found' })
+
+            const similars = await db.manyOrNone('SELECT id, product_name, price, old_price, photos[1] AS photo FROM products WHERE subcategory_id = $1 LIMIT 30',
+                [product.subcategory_id])
+            res.json({ product, similars })
         } catch (e) {
             res.status(500).json({ error: e?.message || 'Unknown Error' })
         }
