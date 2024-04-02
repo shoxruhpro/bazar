@@ -84,11 +84,12 @@ router.route('/')
             let filter = where.length ? ' WHERE ' + where.join(' AND ') : ''
 
             const products = await db.manyOrNone(
-                'SELECT products.id, product_name, price, old_price, photos[1] AS photo, ' +
-                'categories.uz AS category_uz, categories.ru AS category_ru, categories.en AS category_en ' +
-                'FROM products INNER JOIN subcategories ON products.subcategory_id = subcategories.id ' +
-                'INNER JOIN categories ON subcategories.category_id = categories.id ' +
-                filter, req.query)
+                'SELECT p.id, product_name, price, old_price, photos[1] AS photo, is_top, ' +
+                "json_build_object('uz', c.uz, 'ru', c.ru, 'en', c.en) AS category " +
+                'FROM products AS p INNER JOIN subcategories s ON p.subcategory_id = s.id ' +
+                'INNER JOIN categories c ON s.category_id = c.id ' +
+                filter +
+                ' ORDER BY is_top DESC', req.query)
 
             res.json(products)
         } catch (e) {
@@ -122,11 +123,11 @@ router.route('/:id')
 
         try {
             const product = await db.oneOrNone(
-                'SELECT products.id, product_name, product_description, product_address, brand, price, old_price, products.phone_number, variants, photos, full_name, products.user_id ' +
-                'FROM products INNER JOIN subcategories ON products.subcategory_id = subcategories.id ' +
-                'INNER JOIN categories ON subcategories.category_id = categories.id ' +
-                'INNER JOIN users ON products.user_id = users.user_id ' +
-                'WHERE products.id = $1', req.params.id)
+                'SELECT p.id, product_name, product_description, product_address, brand, price, old_price, p.phone_number, variants, photos, full_name, p.user_id, u.photo ' +
+                'FROM products AS p INNER JOIN subcategories s ON p.subcategory_id = s.id ' +
+                'INNER JOIN categories c ON s.category_id = c.id ' +
+                'INNER JOIN users u ON p.user_id = u.user_id ' +
+                'WHERE p.id = $1', req.params.id)
             res.json(product)
         } catch (e) {
             res.status(500).json({ error: e?.message || 'Unknown Error' })
