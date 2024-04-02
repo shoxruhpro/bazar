@@ -9,6 +9,7 @@ const authMiddleware = require('../middlewares/auth.middleware')
 
 const createSchema = Joi.object({
     product_name: Joi.string().min(16).max(70).required(),
+    info: Joi.string().min(40).max(160).allow(null),
     product_description: Joi.string().min(40).max(9000).allow(null),
     product_address: Joi.array().items(Joi.number().integer()).length(2).required(),
     brand: Joi.string().min(2).max(100).allow(null),
@@ -23,6 +24,7 @@ const createSchema = Joi.object({
 
 const updateSchema = Joi.object({
     product_name: Joi.string().min(16).max(70),
+    info: Joi.string().min(40).max(160),
     product_description: Joi.string().min(40).max(9000),
     product_address: Joi.array().items(Joi.number().integer()).length(2),
     brand: Joi.string().min(2).max(100),
@@ -123,7 +125,7 @@ router.route('/:id')
 
         try {
             const product = await db.oneOrNone(
-                'SELECT p.id, product_name, product_description, product_address, brand, price, old_price, p.phone_number, variants, photos, full_name, p.user_id, u.photo ' +
+                'SELECT p.id, product_name, info, product_description, product_address, brand, price, old_price, p.phone_number, variants, photos, full_name, p.user_id, u.photo ' +
                 'FROM products AS p INNER JOIN subcategories s ON p.subcategory_id = s.id ' +
                 'INNER JOIN categories c ON s.category_id = c.id ' +
                 'INNER JOIN users u ON p.user_id = u.user_id ' +
