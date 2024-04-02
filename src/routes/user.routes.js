@@ -32,7 +32,7 @@ router.route('/')
             res.status(500).json({ error: e.message || 'Unknown Error' })
         }
     })
-    .post(authMiddleware, async (req, res) => {
+    .patch(authMiddleware, async (req, res) => {
         try {
             await updateSchema.validateAsync(req.body)
             const { new_password, password } = req.body
