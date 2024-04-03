@@ -1,7 +1,6 @@
 'use strict'
 const router = require('express').Router()
 const db = require('../db')
-// const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const authMiddleware = require('../middlewares/auth.middleware')
 const Joi = require('joi')
