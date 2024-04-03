@@ -11,11 +11,11 @@ const objToQuerySet = require('../utils/obj-to-query-set')
 const updateSchema = Joi.object({
     full_name: Joi.string().min(2).max(30),
     user_address: Joi.string().min(3).max(255),
-    email: Joi.string().min(4).max(255),
-    photo: Joi.string().min(17).max(255),
+    email: Joi.string().min(4).max(255).allow(null),
+    photo: Joi.string().min(17).max(255).allow(null),
     password: Joi.string().min(1).max(255),
     new_password: Joi.string().min(1).max(255)
-})
+}).optional()
 
 
 router.route('/')
@@ -48,18 +48,17 @@ router.route('/')
                 return res.status(404).json({ error: 'Not Found' })
 
             if (new_password && password) {
-                const matched = await bcrypt.compare(req.body.password, user.user_password)
+                const matched = await bcrypt.compare(password, user.user_password)
 
-                if (matched) {
+                if (matched)
                     req.body.user_password = await bcrypt.hash(new_password, 1)
-                }
             }
 
             const [cols, size] = objToQuerySet(req.body)
             if (size === 0)
                 return res.status(400).json({ error: 'Bad Request' })
 
-            const { rowCount } = await db.result(`UPDATE users SET ${cols} WHERE id = $${size + 1}`,
+            const { rowCount } = await db.result(`UPDATE users SET ${cols} WHERE user_id = $${size + 1}`,
                 [
                     ...Object.values(req.body), req.auth.user_id
                 ])
