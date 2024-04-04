@@ -3,7 +3,7 @@ const router = require('express').Router()
 const db = require('../db')
 const otpGenerator = require('otp-generator')
 const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const authMiddleware = require('../middlewares/auth.middleware')
 
 

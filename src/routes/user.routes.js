@@ -1,7 +1,7 @@
 'use strict'
 const router = require('express').Router()
 const db = require('../db')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const authMiddleware = require('../middlewares/auth.middleware')
 const Joi = require('joi')
 const objToQuerySet = require('../utils/obj-to-query-set')
