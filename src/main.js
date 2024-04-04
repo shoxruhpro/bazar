@@ -17,17 +17,16 @@ const PORT = 3000
 
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'tiny' : 'dev'))
 app.use(cors())
-// app.use(helmet({ crossOriginEmbedderPolicy: false }))
 
 app.use('/uploads', express.static('uploads'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use('/api/v1/categories', categryRoutes)
-app.use('/api/v1/subcategories', subcategoryRoutes)
-app.use('/api/v1/products', productRoutes)
-app.use('/api/v1/auth', authRoutes)
-app.use('/api/v1/photo', photoRoutes)
-app.use('/api/v1/user', userRoutes)
+app.use('/v1/categories', categryRoutes)
+app.use('/v1/subcategories', subcategoryRoutes)
+app.use('/v1/products', productRoutes)
+app.use('/v1/auth', authRoutes)
+app.use('/v1/photo', photoRoutes)
+app.use('/v1/user', userRoutes)
 app.get('/', async (req, res) => res.redirect('https://bazart.uz/'))
 app.use(async (req, res) => res.status(404).json({ error: 'Not Found' }));
 
