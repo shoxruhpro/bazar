@@ -17,6 +17,10 @@ router.post('/telegram', async (req, res) => {
 
     if (req.get('x-telegram-bot-api-secret-token') !== BOT_SECRET_TOKEN) return res.sendStatus(400)
 
+    const code = otpGenerator.generate(6, {
+        lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false
+    })
+
     try {
         if (message.text?.startsWith('/start')) {
             const { ok } = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -47,17 +51,26 @@ router.post('/telegram', async (req, res) => {
             let { contact: { user_id, first_name, last_name, phone_number } } = message
             phone_number = phone_number.replace('+', '')
             const full_name = first_name + (last_name ? ' ' + last_name : '')
-            const code = otpGenerator.generate(6, {
-                lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false
-            })
 
-            const { rowCount } = await db.result(
-                'INSERT INTO users (user_id, full_name, phone_number) VALUES ($1, $2, $3);' +
-                // 'ON CONFLICT (user_id) DO UPDATE SET full_name = $2, phone_number = $3 ;\n' +
-                'INSERT INTO codes (code, user_id) VALUES ($4, $1);',
-                [user_id, full_name, phone_number, code])
-
-            if (!rowCount) return res.sendStatus(500)
+            try {
+                const { rowCount } = await db.result(
+                    'INSERT INTO users (user_id, full_name, phone_number) VALUES ($1, $2, $3);' +
+                    // 'ON CONFLICT (user_id) DO UPDATE SET full_name = $2, phone_number = $3 ;\n' +
+                    'INSERT INTO codes (code, user_id) VALUES ($4, $1);',
+                    [user_id, full_name, phone_number, code])
+                if (!rowCount) return res.sendStatus(500)
+            } catch (e) {
+                if (e.code == 23505) {
+                    const { rowCount } = await db.result(
+                        'UPDATE users SET full_name = $2, phone_number = $3 WHERE user_id = $1;\n' +
+                        'INSERT INTO codes (code, user_id) VALUES ($4, $1);',
+                        [user_id, full_name, phone_number, code])
+                    if (!rowCount) return res.sendStatus(500)
+                } else {
+                    res.status(500).json({ error: e.message || 'Unknown Error' })
+                    return console.error(e)
+                }
+            }
 
             const { ok } = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
