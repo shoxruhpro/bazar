@@ -8,5 +8,5 @@ module.exports = pgp({
     user: process.env.DB_USER_NAME,
     password: process.env.DB_USER_PASSWORD,
     max: 30,
-    ssl: true
+    ssl: false
 })
