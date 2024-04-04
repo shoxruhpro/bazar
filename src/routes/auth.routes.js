@@ -103,12 +103,12 @@ router.post('/code', async (req, res) => {
         if (!(code?.length === 6))
             return res.status(400).json({ error: 'Bad Request' })
 
-        const found = await db.oneOrNone('DELETE FROM codes WHERE user_id IN (SELECT user_id FROM codes WHERE code = $1) RETURNING user_id', code)
+        const found = await db.manyOrNone('DELETE FROM codes WHERE user_id IN (SELECT user_id FROM codes WHERE code = $1) RETURNING user_id', code)
 
         if (!found)
             return res.status(401).json({ error: 'Unauthorized' })
 
-        res.json({ token: jwt.sign({ user_id: found.user_id, noPassword: true }, JWT_SECRET, { expiresIn: '1h', algorithm: 'HS256' }) })
+        res.json({ token: jwt.sign({ user_id: found[0].user_id, noPassword: true }, JWT_SECRET, { expiresIn: '30m', algorithm: 'HS256' }) })
     } catch (e) {
         res.status(500).json({ error: e.message || 'Unknown Error' })
     }
@@ -126,7 +126,7 @@ router.post('/password', authMiddleware, async (req, res) => {
         if (!rowCount)
             return res.status(401).json({ error: 'Unauthorized' })
 
-        res.json({ token: jwt.sign({ user_id: req.auth.user_id }, JWT_SECRET, { expiresIn: '1d', algorithm: 'HS256' }) })
+        res.json({ token: jwt.sign({ user_id: req.auth.user_id }, JWT_SECRET, { expiresIn: '1h', algorithm: 'HS256' }) })
     } catch (e) {
         res.status(500).json({ error: e.message || 'Unknown Error' })
     }
@@ -150,7 +150,7 @@ router.post('/login', async (req, res) => {
         if (!matched)
             return res.status(401).json({ error: 'Unauthorized' })
 
-        res.json({ token: jwt.sign({ user_id: user.user_id }, JWT_SECRET, { expiresIn: '1w', algorithm: 'HS256' }) })
+        res.json({ token: jwt.sign({ user_id: user.user_id }, JWT_SECRET, { expiresIn: '3d', algorithm: 'HS256' }) })
     } catch (e) {
         res.status(500).json({ error: e.message || 'Unknown Error' })
     }
