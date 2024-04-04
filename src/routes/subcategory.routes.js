@@ -55,7 +55,7 @@ router.route('/:id')
             return res.status(404).json({ error: 'Not Found' })
 
         try {
-            const subcategory = await db.oneOrNone('SELECT * FROM subcategories WHERE id = $1', req.params.id)
+            const subcategory = await db.oneOrNone('SELECT * FROM subcategories WHERE subcategory_id = $1', req.params.id)
             res.json(subcategory)
         } catch (e) {
             res.status(500).json({ error: e?.message || 'Unknown Error' })
@@ -72,7 +72,7 @@ router.route('/:id')
             if (size === 0)
                 return res.status(400).json({ error: 'Bad Request' })
 
-            const { rowCount } = await db.result(`UPDATE subcategories SET ${cols} WHERE id = $${size + 1}`,
+            const { rowCount } = await db.result(`UPDATE subcategories SET ${cols} WHERE subcategory_id = $${size + 1}`,
                 [
                     ...Object.values(req.body), req.params.id
                 ])
@@ -91,7 +91,7 @@ router.route('/:id')
             return res.status(404).json({ error: 'Not Found' })
 
         try {
-            const { rowCount } = await db.result('DELETE FROM subcategories WHERE id = $1', req.params.id)
+            const { rowCount } = await db.result('DELETE FROM subcategories WHERE subcategory_id = $1', req.params.id)
 
             if (rowCount === 1)
                 res.status(200).json({ success: true })

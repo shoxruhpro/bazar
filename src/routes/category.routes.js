@@ -52,7 +52,7 @@ router.route('/:id')
             return res.status(404).json({ error: 'Not Found' })
 
         try {
-            const category = await db.oneOrNone('SELECT * FROM categories WHERE id = $1', req.params.id)
+            const category = await db.oneOrNone('SELECT * FROM categories WHERE category_id = $1', req.params.id)
             res.json(category)
         } catch (e) {
             res.status(500).json({ error: e?.message || 'Unkown Error' })
@@ -69,7 +69,7 @@ router.route('/:id')
             if (size === 0)
                 return res.status(400).json({ error: 'Bad Request' })
 
-            const { rowCount } = await db.result(`UPDATE categories SET ${cols} WHERE id = $${size + 1}`,
+            const { rowCount } = await db.result(`UPDATE categories SET ${cols} WHERE category_id = $${size + 1}`,
                 [
                     ...Object.values(req.body), req.params.id
                 ])
@@ -88,7 +88,7 @@ router.route('/:id')
             return res.status(404).json({ error: 'Not Found' })
 
         try {
-            const { rowCount } = await db.result('DELETE FROM categories WHERE id = $1', req.params.id)
+            const { rowCount } = await db.result('DELETE FROM categories WHERE category_id = $1', req.params.id)
 
             if (rowCount === 1)
                 res.status(200).json({ success: true })
