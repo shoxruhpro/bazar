@@ -1,8 +1,0 @@
-const obj = {
-    a: 1,
-    b: 2
-}
-
-delete obj.a, obj.b
-
-console.log(obj)

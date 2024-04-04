@@ -1,5 +1,5 @@
 node_modules/
-sql/
+history/
 package-lock.json
 .env
 playground.js
