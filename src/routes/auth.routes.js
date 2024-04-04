@@ -54,8 +54,8 @@ router.post('/telegram', async (req, res) => {
             const { rowCount } = await db.result(
                 'INSERT INTO users (user_id, full_name, phone_number) VALUES ($1, $2, $3) ' +
                 'ON CONFLICT (user_id) DO UPDATE SET full_name = $2, phone_number = $3 ;\n' +
-                'INSERT INTO codes (code, user_id, created_at) VALUES ($4, $1, $5);',
-                [user_id, full_name, phone_number, code, message.date])
+                'INSERT INTO codes (code, user_id) VALUES ($4, $1);',
+                [user_id, full_name, phone_number, code])
 
             if (!rowCount) return res.sendStatus(500)
 
