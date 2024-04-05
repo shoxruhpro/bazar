@@ -7,9 +7,7 @@ const bcrypt = require('bcryptjs')
 const authMiddleware = require('../middlewares/auth.middleware')
 
 
-const BOT_TOKEN = '6579262888:AAFM5TR5u5nGcdL5VER5eNFnFakGKWlc5VM'
-const BOT_SECRET_TOKEN = 'Phx14iOvd2tG17O'
-const { JWT_SECRET } = process.env
+const { JWT_SECRET, BOT_TOKEN, BOT_SECRET_TOKEN } = process.env
 
 
 router.post('/telegram', async (req, res) => {
