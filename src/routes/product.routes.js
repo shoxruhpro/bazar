@@ -102,6 +102,7 @@ router.route('/')
     })
     .post(authMiddleware, async (req, res) => {
         try {
+            req.body.user_id = req.auth.user_id
             await createSchema.validateAsync(req.body)
             const { rowCount } = await db.result('INSERT INTO products ' +
                 '(product_name, product_description, product_address, brand, price, old_price, phone_number, variants, photos, subcategory_id, user_id) VALUES ' +
@@ -127,7 +128,7 @@ router.route('/:id')
         try {
             const product = await db.oneOrNone(
                 'SELECT product_id, product_name, info, product_description, product_address, brand, price, old_price, p.phone_number, p.email, variants, photos, subcategory_id, full_name, p.user_id, u.photo ' +
-                'FROM products p INNER JOIN subcategories s ON p.subcategory_id = s.id ' +
+                'FROM products p INNER JOIN subcategories s ON p.subcategory_id = s.subcategory_id ' +
                 'INNER JOIN categories c ON s.category_id = c.category_id ' +
                 'INNER JOIN users u ON p.user_id = u.user_id ' +
                 'WHERE p.product_id = $1', req.params.id)
