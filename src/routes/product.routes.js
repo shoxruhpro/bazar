@@ -86,12 +86,11 @@ router.route('/')
             let filter = where.length ? ' WHERE ' + where.join(' AND ') : ''
 
             const products = await db.manyOrNone(
-                'SELECT p.id, product_name, price, old_price, photos[1] AS photo, is_top, ' +
+                'SELECT product_id, product_name, price, old_price, photos[1] AS photo, email, ' +
                 "json_build_object('uz', c.uz, 'ru', c.ru, 'en', c.en) AS category " +
-                'FROM products AS p INNER JOIN subcategories s ON p.subcategory_id = s.id ' +
-                'INNER JOIN categories c ON s.category_id = c.id ' +
-                filter +
-                ' ORDER BY is_top DESC', req.query)
+                'FROM products AS p INNER JOIN subcategories s ON p.subcategory_id = s.subcategory_id ' +
+                'INNER JOIN categories c ON s.category_id = c.category_id ' +
+                filter, req.query)
 
             res.json(products)
         } catch (e) {
