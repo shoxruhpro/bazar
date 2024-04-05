@@ -89,7 +89,7 @@ router.route('/')
 
             const products = await db.manyOrNone(
                 'SELECT product_id, product_name, price, old_price, photos[1] AS photo, email, ' +
-                "row_to_json(c.uz, c.ru, c.en) AS category " +
+                "row_to_json(uz, ru, en) AS category " +
                 'FROM products AS p INNER JOIN subcategories s ON p.subcategory_id = s.subcategory_id ' +
                 'INNER JOIN categories c ON s.category_id = c.category_id ' +
                 filter, req.query)
