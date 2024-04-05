@@ -190,7 +190,7 @@ router.post('/liked', async (req, res) => {
     try {
         await Joi.object({ ids: Joi.array().items(Joi.number().integer().min(1)).min(1) })
             .validateAsync(req.body)
-        const products = await db.manyOrNone('SELECT id, product_name, price, old_price, photos[1] AS photo FROM products WHERE id IN ($1:csv)', [req.body.ids])
+        const products = await db.manyOrNone('SELECT product_id, product_name, price, old_price, photos[1] AS photo FROM products WHERE product_id IN ($1:csv)', [req.body.ids])
         res.json(products)
     } catch (e) {
         res.status(500).json({ error: e.message || 'Unknown Error' })
