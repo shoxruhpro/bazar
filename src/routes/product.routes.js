@@ -136,7 +136,7 @@ router.route('/:id')
             if (!product)
                 return res.status(404).json({ error: 'Not Found' })
 
-            const similars = await db.manyOrNone('SELECT id, product_name, price, old_price, photos[1] AS photo FROM products WHERE subcategory_id = $1 LIMIT 30',
+            const similars = await db.manyOrNone('SELECT product_id, product_name, price, old_price, photos[1] AS photo FROM products WHERE subcategory_id = $1 LIMIT 30',
                 [product.subcategory_id])
             res.json({ product, similars })
         } catch (e) {
