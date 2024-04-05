@@ -155,7 +155,7 @@ router.route('/:id')
         try {
             await updateSchema.validateAsync(req.body)
 
-            const { rowCount } = await db.result(`UPDATE products SET ${cols} WHERE id = $${size + 1} AND user_id = $${size + 2}`,
+            const { rowCount } = await db.result(`UPDATE products SET ${cols} WHERE product_id = $${size + 1} AND user_id = $${size + 2}`,
                 [
                     ...Object.values(req.body), req.params.id, req.auth.user_id
                 ])
