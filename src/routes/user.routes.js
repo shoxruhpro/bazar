@@ -76,12 +76,12 @@ router.route('/')
 router.get('/products', authMiddleware, async (req, res) => {
     try {
         const products = await db.manyOrNone(
-            'SELECT p.id, p.product_name, p.price, p.photos[1] AS photo, is_top, ' +
-            "json_build_object('uz', c.uz, 'ru', c.ru, 'en', c.en) AS category, " +
-            "json_build_object('uz', s.uz, 'ru', s.ru, 'en', s.en) AS subcategory " +
+            'SELECT product_id, p.product_name, p.price, p.photos[1] AS photo, ' +
+            "c.uz AS category_uz, c.ru AS category_ru, c.en AS category_en, " +
+            "s.uz AS subcategory_uz, c.ru AS subcategory_ru, c.en AS subcategory_en " +
             'FROM products AS p ' +
-            'INNER JOIN subcategories s ON p.subcategory_id = s.id ' +
-            'INNER JOIN categories c ON s.category_id = c.id ' +
+            'INNER JOIN subcategories s ON p.subcategory_id = s.subcategory_id ' +
+            'INNER JOIN categories c ON s.category_id = c.category_id ' +
             'WHERE p.user_id = $1',
             req.auth.user_id)
 
