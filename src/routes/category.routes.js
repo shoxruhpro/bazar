@@ -27,7 +27,7 @@ router.route('/')
             const categories = await db.manyOrNone('SELECT * FROM categories')
             res.json(categories)
         } catch (e) {
-            res.status(500).json({ error: e?.message || 'Unkown Error' })
+            res.status(500).json({ error: e.message ?? 'Unkown Error' })
         }
     })
     .post(async (req, res) => {
@@ -41,7 +41,7 @@ router.route('/')
                 res.status(500).json({ error: 'Unknown Error' })
         } catch (e) {
             res.status(e instanceof Joi.ValidationError ? 400 : 500)
-            res.json({ error: e.message || 'Unknown Error' })
+            res.json({ error: e.message ?? 'Unknown Error' })
         }
     })
 
@@ -55,7 +55,7 @@ router.route('/:id')
             const category = await db.oneOrNone('SELECT * FROM categories WHERE category_id = $1', req.params.id)
             res.json(category)
         } catch (e) {
-            res.status(500).json({ error: e?.message || 'Unkown Error' })
+            res.status(500).json({ error: e?.message ?? 'Unkown Error' })
         }
     })
     .patch(async (req, res) => {
@@ -80,7 +80,7 @@ router.route('/:id')
                 res.status(404).json({ error: 'Not Found' })
         } catch (e) {
             res.status(e instanceof Joi.ValidationError ? 400 : 500)
-            res.json({ error: e.message || 'Unknown Error' })
+            res.json({ error: e.message ?? 'Unknown Error' })
         }
     })
     .delete(async (req, res) => {
@@ -95,7 +95,7 @@ router.route('/:id')
             else
                 res.status(404).json({ error: 'Not Found' })
         } catch (e) {
-            res.status(500).json({ error: e?.message || 'Unkown Error' })
+            res.status(500).json({ error: e.message ?? 'Unkown Error' })
         }
     })
 

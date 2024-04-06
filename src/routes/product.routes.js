@@ -97,7 +97,7 @@ router.route('/')
             res.json(products)
         } catch (e) {
             const STATUS_CODE = (e instanceof Joi.ValidationError) ? 400 : 500
-            res.status(STATUS_CODE).json({ error: e.message || 'Unknown Error' })
+            res.status(STATUS_CODE).json({ error: e.message ?? 'Unknown Error' })
         }
     })
     .post(authMiddleware, async (req, res) => {
@@ -115,7 +115,7 @@ router.route('/')
                 res.status(500).json({ error: 'Unknown Error' })
         } catch (e) {
             res.status(e instanceof Joi.ValidationError ? 400 : 500)
-            res.json({ error: e.message || 'Unknown Error' })
+            res.json({ error: e.message ?? 'Unknown Error' })
         }
     })
 
@@ -140,7 +140,7 @@ router.route('/:id')
                 [product.subcategory_id])
             res.json({ product, similars })
         } catch (e) {
-            res.status(500).json({ error: e?.message || 'Unknown Error' })
+            res.status(500).json({ error: e.message ?? 'Unknown Error' })
         }
     })
     .patch(authMiddleware, async (req, res) => {
@@ -166,7 +166,7 @@ router.route('/:id')
                 res.status(404).json({ error: 'Not Found' })
         } catch (e) {
             res.status(e instanceof Joi.ValidationError ? 400 : 500)
-            res.json({ error: e.message || 'Unknown Error' })
+            res.json({ error: e.message ?? 'Unknown Error' })
         }
     })
     .delete(authMiddleware, async (req, res) => {
@@ -181,7 +181,7 @@ router.route('/:id')
             else
                 res.status(404).json({ error: 'Not Found' })
         } catch (e) {
-            res.status(500).json({ error: e?.message || 'Unknown Error' })
+            res.status(500).json({ error: e.message ?? 'Unknown Error' })
         }
     })
 
@@ -193,7 +193,7 @@ router.post('/liked', async (req, res) => {
         const products = await db.manyOrNone('SELECT product_id, product_name, price, old_price, photos[1] AS photo FROM products WHERE product_id IN ($1:csv)', [req.body.ids])
         res.json(products)
     } catch (e) {
-        res.status(500).json({ error: e.message || 'Unknown Error' })
+        res.status(500).json({ error: e.message ?? 'Unknown Error' })
     }
 })
 

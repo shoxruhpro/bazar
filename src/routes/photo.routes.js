@@ -30,7 +30,7 @@ router.post('/', authMiddleware, upload.single('photo'), async (req, res) => {
         const photo = await db.one('INSERT INTO photos (file_name) VALUES ($1) RETURNING *', req.file.filename)
         res.json(photo)
     } catch (e) {
-        res.status(500).json({ error: e.message || 'Unknown Error' })
+        res.status(500).json({ error: e.message ?? 'Unknown Error' })
     }
 })
 
@@ -50,7 +50,7 @@ router.delete('/:file_name', authMiddleware, async (req, res) => {
         }
     } catch (e) {
         res.status(e.syscall === 'unlink' ? 404 : 500)
-        res.json({ error: e.message || 'Unknown Error' })
+        res.json({ error: e.message ?? 'Unknown Error' })
     }
 })
 

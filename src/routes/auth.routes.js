@@ -65,7 +65,7 @@ router.post('/telegram', async (req, res) => {
                         [user_id, full_name, phone_number, code])
                     if (!rowCount) return res.sendStatus(500)
                 } else {
-                    res.status(500).json({ error: e.message || 'Unknown Error' })
+                    res.status(500).json({ error: e.message ?? 'Unknown Error' })
                     return console.error(e)
                 }
             }
@@ -88,7 +88,7 @@ router.post('/telegram', async (req, res) => {
             res.sendStatus(ok ? 200 : 500)
         } else res.end()
     } catch (e) {
-        res.status(500).json({ error: e.message || 'Unknown Error' })
+        res.status(500).json({ error: e.message ?? 'Unknown Error' })
         console.error(e)
     }
 })
@@ -108,7 +108,7 @@ router.post('/code', async (req, res) => {
 
         res.json({ token: jwt.sign({ user_id: found[0].user_id, noPassword: true }, JWT_SECRET, { expiresIn: '30m', algorithm: 'HS256' }) })
     } catch (e) {
-        res.status(500).json({ error: e.message || 'Unknown Error' })
+        res.status(500).json({ error: e.message ?? 'Unknown Error' })
     }
 })
 
@@ -126,7 +126,7 @@ router.post('/password', authMiddleware, async (req, res) => {
 
         res.json({ token: jwt.sign({ user_id: req.auth.user_id }, JWT_SECRET, { expiresIn: '1h', algorithm: 'HS256' }) })
     } catch (e) {
-        res.status(500).json({ error: e.message || 'Unknown Error' })
+        res.status(500).json({ error: e.message ?? 'Unknown Error' })
     }
 })
 
@@ -150,7 +150,7 @@ router.post('/login', async (req, res) => {
 
         res.json({ token: jwt.sign({ user_id: user.user_id }, JWT_SECRET, { expiresIn: '3d', algorithm: 'HS256' }) })
     } catch (e) {
-        res.status(500).json({ error: e.message || 'Unknown Error' })
+        res.status(500).json({ error: e.message ?? 'Unknown Error' })
     }
 })
 

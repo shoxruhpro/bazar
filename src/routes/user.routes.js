@@ -28,7 +28,7 @@ router.route('/')
             delete user.user_password
             res.json(user)
         } catch (e) {
-            res.status(500).json({ error: e.message || 'Unknown Error' })
+            res.status(500).json({ error: e.message ?? 'Unknown Error' })
         }
     })
     .patch(authMiddleware, async (req, res) => {
@@ -68,7 +68,7 @@ router.route('/')
                 res.status(404).json({ error: 'Not Found' })
         } catch (e) {
             res.status(e instanceof Joi.ValidationError ? 400 : 500)
-            res.json({ error: e.message || 'Unknown Error' })
+            res.json({ error: e.message ?? 'Unknown Error' })
         }
     })
 
