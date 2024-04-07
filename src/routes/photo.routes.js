@@ -14,15 +14,26 @@ const upload = multer({
         },
         destination: (req, file, cb) => {
             cb(null, 'uploads/')
-        }
+        },
     }),
     fileFilter: (req, file, cb) => {
         cb(null, file.mimetype.startsWith('image'))
-    }
+    },
 })
 
 
-router.post('/', authMiddleware, upload.single('photo'), async (req, res) => {
+const uploadMiddleware = [
+    upload.single('photo'),
+    (err, req, res, next) => {
+        if (err instanceof multer.MulterError)
+            res.status(400).json(err.message)
+        else
+            next()
+    }
+]
+
+
+router.post('/', authMiddleware, uploadMiddleware, async (req, res) => {
     if (!req.file)
         return res.status(400).json({ error: 'Bad Request' })
 
