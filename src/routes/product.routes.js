@@ -56,7 +56,7 @@ router.route('/')
 
             if (req.query.search) {
                 req.query.search = `%${req.query.search}%`
-                where.push('product_name LIKE ${search}')
+                where.push('product_name ILIKE ${search}')
             }
 
             if (typeof req.query.address === 'string') {
