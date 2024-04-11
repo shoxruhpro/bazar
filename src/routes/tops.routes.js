@@ -2,21 +2,28 @@
 const router = require('express').Router()
 const db = require('../db')
 const authMiddleware = require('../middlewares/auth.middleware')
+const Joi = require('joi')
+
+const createSchema = Joi.object({
+    product_id: Joi.number().integer().min(1).required(),
+    tariff_id: Joi.number().integer().min(1).required()
+})
 
 
 router.route('/')
     .post(authMiddleware, async (req, res) => {
         try {
-            req.body.user_id = req.auth.user_id
-            req.body.end_date = Date.now() / 1000
-            const { rowCount } = await db.result('INSERT INTO top_products (end_date, product_id, user_id) VALUES (${end_date}, ${product_id}, ${user_id})', req.body)
+            await createSchema.validateAsync(req.body)
+
+            const { rowCount } = await db.result('INSERT INTO tops (product_id, tariff_id) VALUES (${product_id}, ${tariff_id})', req.body)
 
             if (rowCount === 1)
                 res.status(200).json({ success: true })
             else
                 res.status(500).json({ error: 'Unknown Error' })
         } catch (e) {
-            res.status(500).json({ error: e.message ?? 'Unknown Error' })
+            res.status(e instanceof Joi.ValidationError ? 400 : 500)
+            res.json({ error: e.message ?? 'Unknown Error' })
         }
     })
 
