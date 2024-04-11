@@ -75,7 +75,7 @@ router.route('/')
 
             if (req.query.category_id) {
                 req.query.category_id = Number(req.query.category_id)
-                where.push('category_id = ${category_id}')
+                where.push('p.category_id = ${category_id}')
             }
 
             await filterSchema.validateAsync(req.query)
