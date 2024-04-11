@@ -121,7 +121,7 @@ router.route('/:id')
         try {
             const product = await db.oneOrNone(
                 'SELECT product_id, product_name, info, product_description, product_address, brand, price, old_price, p.phone_number, p.email, variants, photos, full_name, p.user_id, u.photo ' +
-                'FROM products p INNER JOIN categories c ON c.category_id = c.category_id ' +
+                'FROM products p INNER JOIN categories c ON p.category_id = c.category_id ' +
                 'INNER JOIN users u ON p.user_id = u.user_id ' +
                 'WHERE p.product_id = $1 LIMIT 1', req.params.id)
 
