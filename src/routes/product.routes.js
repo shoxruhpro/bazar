@@ -19,7 +19,7 @@ const createSchema = Joi.object({
     email: Joi.string().min(9).max(255).required(),
     variants: Joi.array().items(Joi.string().max(100)).max(10).allow(null),
     photos: Joi.array().items(Joi.string().min(17).max(255)).min(1).max(10).required(),
-    subcategory_id: Joi.number().integer().min(1).required(),
+    category_id: Joi.number().integer().min(1).required(),
     user_id: Joi.number().integer().min(1).required()
 })
 
@@ -35,7 +35,7 @@ const updateSchema = Joi.object({
     email: Joi.string().min(9).max(255),
     variants: Joi.array().items(Joi.string().max(100)).max(10),
     photos: Joi.array().items(Joi.string().min(17).max(255)).min(1).max(10),
-    subcategory_id: Joi.number().integer().min(1)
+    category_id: Joi.number().integer().min(1)
 }).optional()
 
 
@@ -44,8 +44,7 @@ const filterSchema = Joi.object({
     address: Joi.array().items(Joi.number().integer()).length(2),
     from_price: Joi.number().integer().min(1).max(2_000_000_000),
     to_price: Joi.number().integer().min(1).max(2_000_000_000),
-    category_id: Joi.number().min(1),
-    subcategory_id: Joi.number().min(1)
+    category_id: Joi.number().min(1)
 }).optional()
 
 
@@ -74,11 +73,6 @@ router.route('/')
                 where.push('price <= ${to_price}')
             }
 
-            if (req.query.subcategory_id) {
-                req.query.subcategory_id = Number(req.query.subcategory_id)
-                where.push('subcategory_id = ${subcategory_id}')
-            }
-
             if (req.query.category_id) {
                 req.query.category_id = Number(req.query.category_id)
                 where.push('category_id = ${category_id}')
@@ -90,8 +84,7 @@ router.route('/')
             const products = await db.manyOrNone(
                 'SELECT product_id, product_name, price, old_price, photos[1] AS photo, email, ' +
                 "c.uz AS category_uz, c.ru AS category_ru, c.en AS category_en " +
-                'FROM products AS p INNER JOIN subcategories s ON p.subcategory_id = s.subcategory_id ' +
-                'INNER JOIN categories c ON s.category_id = c.category_id ' +
+                'FROM products AS p INNER JOIN categories c ON p.category_id = c.category_id ' +
                 filter, req.query)
 
             res.json(products)
@@ -105,8 +98,8 @@ router.route('/')
             req.body.user_id = req.auth.user_id
             await createSchema.validateAsync(req.body)
             const { rowCount } = await db.result('INSERT INTO products ' +
-                '(product_name, product_description, product_address, brand, price, old_price, phone_number, variants, photos, subcategory_id, user_id) VALUES ' +
-                '(${product_name}, ${product_description}, ${product_address}, ${brand}, ${price}, ${old_price}, ${phone_number}, ${variants}, ${photos}, ${subcategory_id}, ${user_id})',
+                '(product_name, product_description, product_address, brand, price, old_price, phone_number, variants, photos, category_id, user_id) VALUES ' +
+                '(${product_name}, ${product_description}, ${product_address}, ${brand}, ${price}, ${old_price}, ${phone_number}, ${variants}, ${photos}, ${category_id}, ${user_id})',
                 req.body)
 
             if (rowCount === 1)
@@ -127,17 +120,16 @@ router.route('/:id')
 
         try {
             const product = await db.oneOrNone(
-                'SELECT product_id, product_name, info, product_description, product_address, brand, price, old_price, p.phone_number, p.email, variants, photos, full_name, p.user_id, u.photo, p.subcategory_id ' +
-                'FROM products p INNER JOIN subcategories s ON p.subcategory_id = s.subcategory_id ' +
-                'INNER JOIN categories c ON s.category_id = c.category_id ' +
+                'SELECT product_id, product_name, info, product_description, product_address, brand, price, old_price, p.phone_number, p.email, variants, photos, full_name, p.user_id, u.photo ' +
+                'FROM products p INNER JOIN categories c ON c.category_id = c.category_id ' +
                 'INNER JOIN users u ON p.user_id = u.user_id ' +
                 'WHERE p.product_id = $1', req.params.id)
 
             if (!product)
                 return res.status(404).json({ error: 'Not Found' })
 
-            const similars = await db.manyOrNone('SELECT product_id, product_name, price, old_price, photos[1] AS photo FROM products WHERE subcategory_id = $1 LIMIT 30',
-                [product.subcategory_id])
+            const similars = await db.manyOrNone('SELECT product_id, product_name, price, old_price, photos[1] AS photo FROM products WHERE category_id = $1 LIMIT 30',
+                [product.category_id])
             res.json({ product, similars })
         } catch (e) {
             res.status(500).json({ error: e.message ?? 'Unknown Error' })
