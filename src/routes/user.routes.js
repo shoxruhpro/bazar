@@ -18,7 +18,7 @@ const updateSchema = Joi.object({
 
 
 router.route('/')
-    .get(authMiddleware, async (req, res) => {
+    .get(...authMiddleware, async (req, res) => {
         try {
             const user = await db.oneOrNone('SELECT * FROM users WHERE user_id = $1', req.auth.user_id)
 

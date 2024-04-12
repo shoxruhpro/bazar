@@ -9,7 +9,7 @@ module.exports = [
         if (err) {
             res.status(err.status).json(err)
         } else {
-            db.result('UPDATE users SET last_visit = $1 WHERE user_id = $2', [new Date(), req.auth.user_id])
+            db.result('UPDATE users SET last_visit = $1 WHERE user_id = $2', [new Date().toISOString(), req.auth.user_id])
                 .then(result => {
                     console.log(result)
                     next()
