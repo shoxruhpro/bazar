@@ -18,19 +18,24 @@ const updateSchema = Joi.object({
 
 
 router.route('/')
-    .get(...authMiddleware, async (req, res) => {
-        try {
-            const user = await db.oneOrNone('SELECT * FROM users WHERE user_id = $1', req.auth.user_id)
+    .get(...authMiddleware,
+        (req, res, next) => {
+            console.log('test')
+            next()
+        },
+        async (req, res) => {
+            try {
+                const user = await db.oneOrNone('SELECT * FROM users WHERE user_id = $1', req.auth.user_id)
 
-            if (!user)
-                return res.status(404).json({ error: 'Not Found' })
+                if (!user)
+                    return res.status(404).json({ error: 'Not Found' })
 
-            delete user.user_password
-            res.json(user)
-        } catch (e) {
-            res.status(500).json({ error: e.message ?? 'Unknown Error' })
-        }
-    })
+                delete user.user_password
+                res.json(user)
+            } catch (e) {
+                res.status(500).json({ error: e.message ?? 'Unknown Error' })
+            }
+        })
     .patch(authMiddleware, async (req, res) => {
         try {
             await updateSchema.validateAsync(req.body)
@@ -77,11 +82,9 @@ router.get('/products', authMiddleware, async (req, res) => {
     try {
         const products = await db.manyOrNone(
             'SELECT product_id, p.product_name, p.price, p.photos[1] AS photo, ' +
-            "c.uz AS category_uz, c.ru AS category_ru, c.en AS category_en, " +
-            "s.uz AS subcategory_uz, c.ru AS subcategory_ru, c.en AS subcategory_en " +
+            "c.uz AS category_uz, c.ru AS category_ru, c.en AS category_en " +
             'FROM products AS p ' +
-            'INNER JOIN subcategories s ON p.subcategory_id = s.subcategory_id ' +
-            'INNER JOIN categories c ON s.category_id = c.category_id ' +
+            'INNER JOIN categories c ON p.category_id = c.category_id ' +
             'WHERE p.user_id = $1',
             req.auth.user_id)
 
