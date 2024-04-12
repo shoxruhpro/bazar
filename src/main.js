@@ -11,7 +11,6 @@ const userRoutes = require('./routes/user.routes')
 const topsRouter = require('./routes/tops.routes')
 const tariffRouter = require('./routes/tariff.routes')
 const cors = require('cors')
-const lastVisitMiddleware = require('./middlewares/last-visit.middleware')
 // const helmet = require('helmet')
 
 const PORT = 3000
@@ -30,7 +29,6 @@ app.use('/v1/photo', photoRoutes)
 app.use('/v1/user', userRoutes)
 app.use('/v1/tariffs', tariffRouter)
 app.use('/v1/tops', topsRouter)
-app.use(lastVisitMiddleware)
 app.get('/', async (req, res) => res.redirect('https://bazart.uz/'))
 app.use(async (req, res) => res.status(404).json({ error: 'Not Found' }));
 

@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs')
 const authMiddleware = require('../middlewares/auth.middleware')
 const Joi = require('joi')
 const objToQuerySet = require('../utils/obj-to-query-set')
+const lastVisitMiddleware = require('../middlewares/last-visit.middleware')
 
 
 const updateSchema = Joi.object({
@@ -18,11 +19,7 @@ const updateSchema = Joi.object({
 
 
 router.route('/')
-    .get(...authMiddleware,
-        (req, res, next) => {
-            console.log('test')
-            next()
-        },
+    .get(...authMiddleware, lastVisitMiddleware,
         async (req, res) => {
             try {
                 const user = await db.oneOrNone('SELECT * FROM users WHERE user_id = $1', req.auth.user_id)
