@@ -8,7 +8,7 @@ module.exports = [
         if (err)
             res.status(err.status).json(err)
         else {
-            const result = await db.result('UPDATE users SET last_login = $1 WHERE user_id = $2', [Date.now() / 1000, req.auth.user_id])
+            const result = await db.result('UPDATE users SET last_visit = $1 WHERE user_id = $2', [Date.now() / 1000, req.auth.user_id])
             console.log(result)
             next()
         }
