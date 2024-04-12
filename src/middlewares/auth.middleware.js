@@ -5,6 +5,7 @@ const db = require('../db')
 module.exports = [
     expressjwt({ secret: process.env.JWT_SECRET, algorithms: ['HS256'] }),
     (err, req, res, next) => {
+        console.log('test!')
         if (err) {
             res.status(err.status).json(err)
         } else {
