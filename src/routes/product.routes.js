@@ -98,8 +98,8 @@ router.route('/')
             req.body.user_id = req.auth.user_id
             await createSchema.validateAsync(req.body)
             const { rowCount } = await db.result('INSERT INTO products ' +
-                '(product_name, product_description, product_address, brand, price, old_price, phone_number, variants, photos, category_id, user_id) VALUES ' +
-                '(${product_name}, ${product_description}, ${product_address}, ${brand}, ${price}, ${old_price}, ${phone_number}, ${variants}, ${photos}, ${category_id}, ${user_id})',
+                '(product_name, product_description, info, product_address, brand, price, old_price, phone_number, variants, photos, category_id, user_id) VALUES ' +
+                '(${product_name}, ${product_description}, ${info}, ${product_address}, ${brand}, ${price}, ${old_price}, ${phone_number}, ${variants}, ${photos}, ${category_id}, ${user_id})',
                 req.body)
 
             if (rowCount === 1)
