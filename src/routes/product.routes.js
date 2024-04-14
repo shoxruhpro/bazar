@@ -85,10 +85,9 @@ router.route('/')
                 'SELECT p.product_id, p.product_name, p.price, p.old_price, photos[1] AS photo, p.email, ' +
                 "c.uz AS category_uz, c.ru AS category_ru, c.en AS category_en, " +
                 "t.uz AS tariff_uz, t.ru AS tariff_ru, t.en AS tariff_en " +
-
                 'FROM products AS p INNER JOIN categories c ON p.category_id = c.category_id ' +
-                'INNER JOIN tops ON p.product_id = tops.product_id ' +
-                'INNER JOIN tariffs t ON tops.tariff_id = t.tariff_id AND tops.verified_at IS NOT NULL ' +
+                'LEFT JOIN tops ON p.product_id = tops.product_id ' +
+                'LEFT JOIN tariffs t ON tops.tariff_id = t.tariff_id AND tops.verified_at IS NOT NULL ' +
                 filter + ' ORDER BY t.tariff_id DESC', req.query)
 
             res.json(products)
