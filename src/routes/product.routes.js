@@ -32,7 +32,7 @@ const updateSchema = Joi.object({
     price: Joi.number().integer().min(0).max(2_000_000_000),
     old_price: Joi.number().integer().min(0).max(2_000_000_000),
     phone_number: Joi.string().min(5).max(18),
-    email: Joi.string().min(9).max(255),
+    email: Joi.string().min(9).max(255).allow(null),
     variants: Joi.array().items(Joi.string().max(100)).max(10),
     photos: Joi.array().items(Joi.string().min(17).max(255)).min(1).max(10),
     category_id: Joi.number().integer().min(1)
