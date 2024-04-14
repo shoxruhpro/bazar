@@ -55,7 +55,7 @@ router.route('/')
 
             if (req.query.search) {
                 req.query.search = `%${req.query.search}%`
-                where.push('product_name ILIKE ${search}')
+                where.push('p.product_name ILIKE ${search}')
             }
 
             if (typeof req.query.address === 'string') {
@@ -65,12 +65,12 @@ router.route('/')
 
             if (req.query.from_price) {
                 req.query.from_price = Number(req.query.from_price)
-                where.push('price >= ${from_price}')
+                where.push('p.price >= ${from_price}')
             }
 
             if (req.query.to_price) {
                 req.query.to_price = Number(req.query.to_price)
-                where.push('price <= ${to_price}')
+                where.push('p.price <= ${to_price}')
             }
 
             if (req.query.category_id) {
@@ -82,7 +82,7 @@ router.route('/')
             let filter = where.length ? ' WHERE ' + where.join(' AND ') : ''
 
             const products = await db.manyOrNone(
-                'SELECT p.product_id, product_name, p.price, p.old_price, photos[1] AS photo, email, ' +
+                'SELECT p.product_id, p.product_name, p.price, p.old_price, photos[1] AS photo, p.email, ' +
                 "c.uz AS category_uz, c.ru AS category_ru, c.en AS category_en, " +
                 "t.uz AS tariff_uz, t.ru AS tariff_ru, t.en AS tariff_en " +
 
