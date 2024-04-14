@@ -89,7 +89,7 @@ router.route('/')
                 'FROM products AS p INNER JOIN categories c ON p.category_id = c.category_id ' +
                 'INNER JOIN tops ON p.product_id = tops.product_id ' +
                 'INNER JOIN tariffs t ON tops.tariff_id = t.tariff_id AND tops.verified_at IS NOT NULL ' +
-                filter, req.query)
+                filter + ' ORDER BY tariff_id DESC', req.query)
 
             res.json(products)
         } catch (e) {
