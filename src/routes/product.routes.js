@@ -16,9 +16,9 @@ const createSchema = Joi.object({
     price: Joi.number().integer().min(0).max(2_000_000_000).required(),
     old_price: Joi.number().integer().min(0).max(2_000_000_000).allow(null),
     phone_number: Joi.string().min(5).max(18).required(),
-    email: Joi.string().min(9).max(255).required(),
+    email: Joi.string().min(9).max(255),
     variants: Joi.array().items(Joi.string().max(100)).max(10).allow(null),
-    photos: Joi.array().items(Joi.string().min(17).max(255)).min(1).max(10).required(),
+    photos: Joi.array().items(Joi.string().min(17).max(255)).min(1).max(5).required(),
     category_id: Joi.number().integer().min(1).required(),
     user_id: Joi.number().integer().min(1).required()
 })
