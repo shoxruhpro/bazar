@@ -82,7 +82,7 @@ router.route('/')
             let filter = where.length ? ' WHERE ' + where.join(' AND ') : ''
 
             const products = await db.manyOrNone(
-                'SELECT product_id, product_name, price, old_price, photos[1] AS photo, email, ' +
+                'SELECT p.product_id, product_name, p.price, p.old_price, photos[1] AS photo, email, ' +
                 "c.uz AS category_uz, c.ru AS category_ru, c.en AS category_en, " +
                 "t.uz AS tariff_uz, t.ru AS tariff_ru, t.en AS tariff_en " +
 
