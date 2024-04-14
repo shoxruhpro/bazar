@@ -8,9 +8,9 @@ const authMiddleware = require('../middlewares/auth.middleware')
 
 
 const createSchema = Joi.object({
-    product_name: Joi.string().min(16).max(70).required(),
-    info: Joi.string().min(40).max(160).allow(null),
-    product_description: Joi.string().min(40).max(9000).allow(null),
+    product_name: Joi.string().min(1).max(70).required(),
+    info: Joi.string().max(160).allow(null).allow(''),
+    product_description: Joi.string().max(9000).allow(null).allow(''),
     product_address: Joi.array().items(Joi.number().integer()).length(2).required(),
     brand: Joi.string().min(2).max(100).allow(null),
     price: Joi.number().integer().min(0).max(2_000_000_000).required(),
@@ -24,9 +24,9 @@ const createSchema = Joi.object({
 })
 
 const updateSchema = Joi.object({
-    product_name: Joi.string().min(16).max(70),
-    info: Joi.string().min(40).max(160),
-    product_description: Joi.string().min(40).max(9000),
+    product_name: Joi.string().min(1).max(70),
+    info: Joi.string().max(160).allow(null).allow(''),
+    product_description: Joi.string().max(9000).allow(null).allow(''),
     product_address: Joi.array().items(Joi.number().integer()).length(2),
     brand: Joi.string().min(2).max(100),
     price: Joi.number().integer().min(0).max(2_000_000_000),
