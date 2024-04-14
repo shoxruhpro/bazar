@@ -40,11 +40,11 @@ const updateSchema = Joi.object({
 
 
 const filterSchema = Joi.object({
-    search: Joi.string().min(2).max(255),
+    search: Joi.string().min(1).max(255),
     address: Joi.array().items(Joi.number().integer()).length(2),
     from_price: Joi.number().integer().min(1).max(2_000_000_000),
     to_price: Joi.number().integer().min(1).max(2_000_000_000),
-    category_id: Joi.number().min(1)
+    category_id: Joi.number().integer().min(1)
 }).optional()
 
 
