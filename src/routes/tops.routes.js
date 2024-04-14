@@ -29,7 +29,7 @@ router.route('/')
     })
     .get(async (req, res) => {
         try {
-            const tops = await db.manyOrNone('SELECT * FROM tops INNER JOIN products WHERE tops.product_id = products.product_id AND tops.verified_at IS NOT NULL')
+            const tops = await db.manyOrNone('SELECT * FROM tops INNER JOIN products ON tops.product_id = products.product_id AND tops.verified_at IS NOT NULL')
             res.json(tops)
         } catch (e) {
             res.status(500).json({ error: e.message ?? 'Unkown Error' })
