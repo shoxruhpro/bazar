@@ -79,7 +79,7 @@ router.get('/products', authMiddleware, async (req, res) => {
     try {
         const products = await db.manyOrNone(
             'SELECT p.product_id, p.product_name, p.price, p.photos[1] AS photo, ' +
-            "c.uz AS category_uz, c.ru AS category_ru, c.en AS category_en " +
+            "c.uz AS category_uz, c.ru AS category_ru, c.en AS category_en, " +
             "t.uz AS tariff_uz, t.ru AS tariff_ru, t.en AS tariff_en " +
             'FROM products AS p ' +
             'INNER JOIN categories c ON p.category_id = c.category_id ' +

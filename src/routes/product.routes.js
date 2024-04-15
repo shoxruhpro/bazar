@@ -132,7 +132,7 @@ router.route('/:id')
                 return res.status(404).json({ error: 'Not Found' })
 
             const similars = await db.manyOrNone(
-                'SELECT product_id, product_name, price, old_price, photos[1] AS photo ' +
+                'SELECT product_id, product_name, price, old_price, photos[1] AS photo, ' +
                 "t.uz AS tariff_uz, t.ru AS tariff_ru, t.en AS tariff_en " +
                 'LEFT JOIN tops ON p.product_id = tops.product_id ' +
                 'LEFT JOIN tariffs t ON tops.tariff_id = t.tariff_id ' +
@@ -191,7 +191,7 @@ router.post('/liked', async (req, res) => {
         await Joi.object({ ids: Joi.array().items(Joi.number().integer().min(1)).min(1) })
             .validateAsync(req.body)
         const products = await db.manyOrNone(
-            'SELECT product_id, product_name, price, old_price, photos[1] AS photo ' +
+            'SELECT product_id, product_name, price, old_price, photos[1] AS photo, ' +
             "t.uz AS tariff_uz, t.ru AS tariff_ru, t.en AS tariff_en " +
             'FROM products ' +
             'LEFT JOIN tops ON p.product_id = tops.product_id ' +
