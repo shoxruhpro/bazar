@@ -197,7 +197,7 @@ router.post('/liked', async (req, res) => {
             'FROM products p ' +
             'LEFT JOIN tops ON p.product_id = tops.product_id ' +
             'LEFT JOIN tariffs t ON tops.tariff_id = t.tariff_id ' +
-            'WHERE product_id IN ($1:csv)', [req.body.ids])
+            'WHERE p.product_id IN ($1:csv)', [req.body.ids])
         res.json(products)
     } catch (e) {
         res.status(500).json({ error: e.message ?? 'Unknown Error' })
