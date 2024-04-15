@@ -87,7 +87,7 @@ router.route('/')
                 "t.uz AS tariff_uz, t.ru AS tariff_ru, t.en AS tariff_en " +
                 'FROM products AS p INNER JOIN categories c ON p.category_id = c.category_id ' +
                 'LEFT JOIN tops ON p.product_id = tops.product_id ' +
-                'LEFT JOIN tariffs t ON tops.tariff_id = t.tariff_id ' +// AND tops.verified_at IS NOT NULL ' +
+                'LEFT JOIN tariffs t ON tops.tariff_id = t.tariff_id ' + // AND tops.verified_at IS NOT NULL ' +
                 filter + ' ORDER BY t.price DESC NULLS LAST', req.query)
 
             res.json(products)
@@ -131,7 +131,12 @@ router.route('/:id')
             if (!product)
                 return res.status(404).json({ error: 'Not Found' })
 
-            const similars = await db.manyOrNone('SELECT product_id, product_name, price, old_price, photos[1] AS photo FROM products WHERE category_id = $1 LIMIT 30',
+            const similars = await db.manyOrNone(
+                'SELECT product_id, product_name, price, old_price, photos[1] AS photo ' +
+                "t.uz AS tariff_uz, t.ru AS tariff_ru, t.en AS tariff_en " +
+                'LEFT JOIN tops ON p.product_id = tops.product_id ' +
+                'LEFT JOIN tariffs t ON tops.tariff_id = t.tariff_id ' +
+                'FROM products WHERE category_id = $1 LIMIT 30',
                 [product.category_id])
             res.json({ product, similars })
         } catch (e) {
@@ -185,7 +190,13 @@ router.post('/liked', async (req, res) => {
     try {
         await Joi.object({ ids: Joi.array().items(Joi.number().integer().min(1)).min(1) })
             .validateAsync(req.body)
-        const products = await db.manyOrNone('SELECT product_id, product_name, price, old_price, photos[1] AS photo FROM products WHERE product_id IN ($1:csv)', [req.body.ids])
+        const products = await db.manyOrNone(
+            'SELECT product_id, product_name, price, old_price, photos[1] AS photo ' +
+            "t.uz AS tariff_uz, t.ru AS tariff_ru, t.en AS tariff_en " +
+            'FROM products ' +
+            'LEFT JOIN tops ON p.product_id = tops.product_id ' +
+            'LEFT JOIN tariffs t ON tops.tariff_id = t.tariff_id ' +
+            'WHERE product_id IN ($1:csv)', [req.body.ids])
         res.json(products)
     } catch (e) {
         res.status(500).json({ error: e.message ?? 'Unknown Error' })
