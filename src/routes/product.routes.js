@@ -132,9 +132,9 @@ router.route('/:id')
                 return res.status(404).json({ error: 'Not Found' })
 
             const similars = await db.manyOrNone(
-                'SELECT product_id, product_name, price, old_price, photos[1] AS photo, ' +
+                'SELECT p.product_id, p.product_name, p.price, p.old_price, p.photos[1] AS photo, ' +
                 "t.uz AS tariff_uz, t.ru AS tariff_ru, t.en AS tariff_en " +
-                'FROM products ' +
+                'FROM products p ' +
                 'LEFT JOIN tops ON p.product_id = tops.product_id ' +
                 'LEFT JOIN tariffs t ON tops.tariff_id = t.tariff_id ' +
                 'WHERE category_id = $1 LIMIT 30',
@@ -192,9 +192,9 @@ router.post('/liked', async (req, res) => {
         await Joi.object({ ids: Joi.array().items(Joi.number().integer().min(1)).min(1) })
             .validateAsync(req.body)
         const products = await db.manyOrNone(
-            'SELECT product_id, product_name, price, old_price, photos[1] AS photo, ' +
+            'SELECT p.product_id, p.product_name, p.price, p.old_price, p.photos[1] AS photo, ' +
             "t.uz AS tariff_uz, t.ru AS tariff_ru, t.en AS tariff_en " +
-            'FROM products ' +
+            'FROM products p ' +
             'LEFT JOIN tops ON p.product_id = tops.product_id ' +
             'LEFT JOIN tariffs t ON tops.tariff_id = t.tariff_id ' +
             'WHERE product_id IN ($1:csv)', [req.body.ids])
