@@ -134,9 +134,10 @@ router.route('/:id')
             const similars = await db.manyOrNone(
                 'SELECT product_id, product_name, price, old_price, photos[1] AS photo, ' +
                 "t.uz AS tariff_uz, t.ru AS tariff_ru, t.en AS tariff_en " +
+                'FROM products ' +
                 'LEFT JOIN tops ON p.product_id = tops.product_id ' +
                 'LEFT JOIN tariffs t ON tops.tariff_id = t.tariff_id ' +
-                'FROM products WHERE category_id = $1 LIMIT 30',
+                'WHERE category_id = $1 LIMIT 30',
                 [product.category_id])
             res.json({ product, similars })
         } catch (e) {
