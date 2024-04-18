@@ -99,11 +99,11 @@ router.route('/')
     .post(authMiddleware, async (req, res) => {
         try {
             req.body.user_id = req.auth.user_id
-            await createSchema.validateAsync(req.body)
+            const product = await createSchema.validateAsync(req.body)
             const createdProduct = await db.oneOrNone('INSERT INTO products ' +
                 '(product_name, product_description, info, product_address, brand, price, old_price, phone_number, variants, photos, category_id, user_id) VALUES ' +
                 '(${product_name}, ${product_description}, ${info}, ${product_address}, ${brand}, ${price}, ${old_price}, ${phone_number}, ${variants}, ${photos}, ${category_id}, ${user_id}) RETURNING product_id',
-                req.body)
+                product)
 
             if (createdProduct)
                 res.status(201).json(createdProduct)
